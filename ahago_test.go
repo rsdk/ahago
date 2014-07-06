@@ -23,5 +23,4 @@ func Test_utf8ToUtf16le(t *testing.T) {
 			t.Error("UTF8 to UTF16LE IST:", b, " SOLL:", soll[i])
 		}
 	}
-
 }

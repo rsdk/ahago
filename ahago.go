@@ -134,10 +134,10 @@ func (s *connection) GetSwitchList(ain string) string {
 func (c *connection) prepareSH(ain, switchcmd string) string {
 	baseurl := "http://fritz.box/webservices/homeautoswitch.lua"
 	parameters := make(map[string]string)
-	if time.Since(c.time).Minutes() > 10 {
+	if time.Since(c.time).Minutes() >= 10 {
 		c.getSessionId()
-		c.time = time.Now()
 	}
+	c.time = time.Now()
 	parameters["sid"] = c.sid
 	if ain != "" {
 		parameters["ain"] = ain
@@ -171,7 +171,7 @@ func sendRequest(Url *url.URL) []byte {
 		panic("Fehler beim Request senden")
 	}
 	if resp.StatusCode != 200 {
-		fmt.Println("Response: ", resp)
+		fmt.Println("Response: ", resp.StatusCode)
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
@@ -244,4 +244,13 @@ func utf8ToUtf16le(in []byte) []byte {
 		utf16le = append(utf16le, b[0], b[1])
 	}
 	return utf16le
+}
+
+func (c *connection) Close() {
+	baseurl := "http://fritz.box/webservices/homeautoswitch.lua"
+	parameters := make(map[string]string)
+	parameters["sid"] = c.sid
+	parameters["logout"] = "logout"
+	Url := prepareRequest(baseurl, parameters)
+	sendRequest(Url)
 }
