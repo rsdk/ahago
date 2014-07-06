@@ -54,6 +54,8 @@ func (c *connection) GetStatus() {
 			state_int, _ := strconv.ParseInt(state, 10, 32)
 			if state_int == 1 {
 				fmt.Println(name, " is on.")
+				power := strings.TrimSpace(c.GetSwitchPower(val))
+				fmt.Printf("Current Power: %vmW\n", power)
 			} else {
 				fmt.Println(name, " is off.")
 			}
@@ -62,8 +64,6 @@ func (c *connection) GetStatus() {
 		}
 		energy := strings.TrimSpace(c.GetSwitchEnergy(val))
 		fmt.Printf("Total Energy used: %vWh\n", energy)
-		power := strings.TrimSpace(c.GetSwitchPower(val))
-		fmt.Printf("Current Power: %vmW\n", power)
 		fmt.Println()
 	}
 }
@@ -246,6 +246,7 @@ func utf8ToUtf16le(in []byte) []byte {
 	return utf16le
 }
 
+//Close invalidates the Session-Id.
 func (c *connection) Close() {
 	baseurl := "http://fritz.box/webservices/homeautoswitch.lua"
 	parameters := make(map[string]string)
